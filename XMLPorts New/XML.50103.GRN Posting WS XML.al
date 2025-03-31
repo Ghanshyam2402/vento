@@ -25,13 +25,16 @@ xmlport 50103 "GRN Posting WS XML"
 
                     fieldattribute(LineNo; PurchaseLine."Line No.") { Occurrence = Optional; }
                     fieldattribute(QtytoRcv; PurchaseLine."Qty. to Receive") { Occurrence = Optional; }
+                    fieldattribute(BinCode; PurchaseLine."Bin Code") { Occurrence = Optional; }
 
                     //Purchase Line
                     trigger OnAfterInsertRecord()
                     BEGIN
 
                         PurchaseLineRec.GET(PurchaseLineRec."Document Type"::Order, PurchaseHeader."No.", PurchaseLine."Line No.");
-                        PurchaseLineRec.Validate("Qty. to Receive", PurchaseLine."Qty. to Receive");//RY
+                        PurchaseLineRec.Validate("Qty. to Receive", PurchaseLine."Qty. to Receive");
+                        IF PurchaseLine."Bin Code" <> '' then
+                            PurchaseLineRec.Validate("Bin Code", PurchaseLine."Bin Code");
                         PurchaseLineRec.Modify();
                     END;
                 }

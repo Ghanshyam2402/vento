@@ -28,6 +28,8 @@ xmlport 50100 "Transfer Order WS XML"
                     fieldattribute(ItemNo; TransferLine."Item No.") { Occurrence = Optional; }
                     fieldattribute(UnitofMeasureCode; TransferLine."Unit of Measure Code") { Occurrence = Optional; }
                     fieldattribute(Quantity; TransferLine.Quantity) { Occurrence = Optional; }
+                    fieldattribute(TransferfromBinCode; TransferLine."Transfer-from Bin Code") { Occurrence = Optional; }
+                    fieldattribute(TransferToBinCode; TransferLine."Transfer-To Bin Code") { Occurrence = Optional; }
 
 
                     //Transfer Line
@@ -46,6 +48,10 @@ xmlport 50100 "Transfer Order WS XML"
                             TransferLineRec.VALIDATE("Transfer-to Code", TrasnferHeaderRec."Transfer-to Code");
 
                             TransferLineRec.VALIDATE(TransferLineRec.Quantity, TransferLine.Quantity);
+                            IF TransferLine."Transfer-from Bin Code" <> '' then
+                                TransferLineRec.VALIDATE("Transfer-from Bin Code", TransferLine."Transfer-from Bin Code");
+                            IF TransferLine."Transfer-To Bin Code" <> '' then
+                                TransferLineRec.VALIDATE("Transfer-To Bin Code", TransferLine."Transfer-To Bin Code");
                             TransferLineRec.Modify();
                         end;
                     end;

@@ -74,6 +74,7 @@ xmlport 50101 "Supply Purchase Order Creation"
                     fieldattribute(Location; PurchaseLine."Location Code") { Occurrence = Optional; }
                     fieldattribute(Qty; PurchaseLine.Quantity) { Occurrence = Optional; }
                     fieldattribute(DirectUnitCost; PurchaseLine."Direct Unit Cost") { Occurrence = Optional; }
+                    fieldattribute(BinCode; PurchaseLine."Bin Code") { Occurrence = Optional; }
                     //PURCHASE LINES
                     trigger OnAfterInsertRecord()
                     var
@@ -91,6 +92,7 @@ xmlport 50101 "Supply Purchase Order Creation"
                         PurchaseLineRec.VALIDATE(PurchaseLineRec.Quantity, PurchaseLine.Quantity);
                         PurchaseLineRec.VALIDATE(PurchaseLineRec."Direct Unit Cost", PurchaseLine."Direct Unit Cost");
                         PurchaseLineRec.VALIDATE(PurchaseLineRec."Location Code", PurchaseLine."Location Code");
+                        PurchaseLineRec.VALIDATE(PurchaseLineRec."Bin Code", PurchaseLine."Bin Code");
                         PurchaseLineRec."Dimension Set ID" := PurchaseHeaderRec."Dimension Set ID";
 
                         PurchaseLineRec.Modify();
