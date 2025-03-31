@@ -1,4 +1,4 @@
-codeunit 50103 "General BBQ Functions"
+codeunit 50103 "General Functions"
 {
     trigger OnRun();
     begin

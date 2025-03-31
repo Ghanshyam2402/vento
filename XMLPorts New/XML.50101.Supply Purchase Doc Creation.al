@@ -40,7 +40,7 @@ xmlport 50101 "Supply Purchase Order Creation"
                         TempDimSetEntry.SetRange("Dimension Code", DimensionSetEntry."Dimension Code");
                         TempDimSetEntry.SetRange("Dimension Value Code", DimensionSetEntry."Dimension Value Code");
                         IF NOT TempDimSetEntry.FindFirst() then begin
-                            GeneralBBQFunctions.UpdateDimension(TempDimSetEntry, DimensionSetEntry."Dimension Code", DimensionSetEntry."Dimension Value Code");
+                            GeneralFunctions.UpdateDimension(TempDimSetEntry, DimensionSetEntry."Dimension Code", DimensionSetEntry."Dimension Value Code");
 
                             NewDimSetID := DimMngt.GetDimensionSetID(TempDimSetEntry);
 
@@ -192,7 +192,7 @@ xmlport 50101 "Supply Purchase Order Creation"
         NoSeriesMgt: Codeunit "No. Series";
         SingleInstanceCodeunit: Codeunit "Single Instance Codeunit";
         TempDimSetEntry: Record 480 temporary;
-        GeneralBBQFunctions: Codeunit "General BBQ Functions";
+        GeneralFunctions: Codeunit "General Functions";
         DimMngt: Codeunit 408;
         GLSetup: Record "General Ledger Setup";
         ApprovalsMgmt: Codeunit 1535;
