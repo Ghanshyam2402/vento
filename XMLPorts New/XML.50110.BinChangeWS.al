@@ -23,6 +23,21 @@ xmlport 50110 "Bin Change WS XML"
                 fieldattribute(JournalTemplateName; ItemReclassJournalLine."Journal Template Name") { }
                 fieldattribute(JournalBatchName; ItemReclassJournalLine."Journal Batch Name") { }
 
+                trigger OnBeforeInsertRecord()
+                begin
+                    if not IsFirstRecord then
+                        exit;
+                    IsFirstRecord := false;
+
+                    // Delete existing records for the same journal template and batch
+                    ItemJnlLine.Reset();
+                    ItemJnlLine.SetRange("Journal Template Name", ItemReclassJournalLine."Journal Template Name");
+                    ItemJnlLine.SetRange("Journal Batch Name", ItemReclassJournalLine."Journal Batch Name");
+                    if ItemJnlLine.FindSet() then
+                        ItemJnlLine.DeleteAll();
+
+                end;
+
                 trigger OnAfterInsertRecord()
                 var
                     ItemJournalTemplate: Record "Item Journal Template";
@@ -36,11 +51,13 @@ xmlport 50110 "Bin Change WS XML"
                     ItemReclassJournalLineRec.Validate("Journal Template Name", ItemReclassJournalLine."Journal Template Name");
                     ItemReclassJournalLineRec.Validate("Journal Batch Name", ItemReclassJournalLine."Journal Batch Name");
                     ItemReclassJournalLineRec.Validate("Line No.", ItemReclassJournalLine."Line No.");
+                    ItemReclassJournalLineRec.Validate("Entry Type", ItemReclassJournalLine."Entry Type"::Transfer);
                     ItemReclassJournalLineRec.Insert(true);
 
+                    ItemReclassJournalLineRec.Validate("Item No.", ItemReclassJournalLine."Item No.");
                     ItemReclassJournalLineRec.Validate("Posting Date", ItemReclassJournalLine."Posting Date");
-                    ItemReclassJournalLineRec.Validate("External Document No.", ItemReclassJournalLine."External Document No.");
                     ItemReclassJournalLineRec.Validate("Location Code", ItemReclassJournalLine."Location Code");
+                    ItemReclassJournalLineRec.Validate("New Location Code", ItemReclassJournalLine."Location Code");
                     ItemReclassJournalLineRec.Validate("Item No.", ItemReclassJournalLine."Item No.");
                     ItemReclassJournalLineRec.Validate("Unit of Measure Code", ItemReclassJournalLine."Unit of Measure Code");
                     ItemReclassJournalLineRec.Validate(Quantity, ItemReclassJournalLine.Quantity);
@@ -48,7 +65,7 @@ xmlport 50110 "Bin Change WS XML"
                     ItemReclassJournalLineRec.Validate("New Bin Code", ItemReclassJournalLine."New Bin Code");
 
                     if DocumentNo = '' then begin
-                        DocumentNo := NoSeriesMgt.GetNextNo(ItemJournalBatch."No. Series", ItemReclassJournalLine."Posting Date", true);
+                        DocumentNo := NoSeriesMgt.PeekNextNo(ItemJournalBatch."No. Series");
                     end;
                     ItemReclassJournalLineRec.Validate("Document No.", DocumentNo);
                     ItemReclassJournalLineRec.Modify(true);
@@ -56,6 +73,11 @@ xmlport 50110 "Bin Change WS XML"
             }
         }
     }
+
+    trigger OnInitXmlPort()
+    begin
+        IsFirstRecord := true;
+    end;
 
     trigger OnPostXmlPort()
     begin
@@ -77,4 +99,5 @@ xmlport 50110 "Bin Change WS XML"
         DocumentNo: Code[20];
         ItemJnlPostBatch: Codeunit "Item Jnl.-Post Batch";
         ItemJnlLine: Record "Item Journal Line";
+        IsFirstRecord: Boolean;
 }
