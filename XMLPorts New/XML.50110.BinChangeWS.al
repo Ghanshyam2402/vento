@@ -59,6 +59,15 @@ xmlport 50110 "Bin Change WS XML"
 
     trigger OnPostXmlPort()
     begin
+
+        ItemJnlLine.Reset();
+        ItemJnlLine.SetRange("Journal Template Name", ItemReclassJournalLineRec."Journal Template Name");
+        ItemJnlLine.SetRange("Journal Batch Name", ItemReclassJournalLineRec."Journal Batch Name");
+        ItemJnlLine.SetRange("Document No.", DocumentNo);
+
+        if ItemJnlLine.FindSet() then
+            ItemJnlPostBatch.Run(ItemJnlLine);
+
         SingleInstanceCodeunit.SetPONumber(DocumentNo);
     end;
 
@@ -66,4 +75,6 @@ xmlport 50110 "Bin Change WS XML"
         ItemReclassJournalLineRec: Record "Item Journal Line";
         SingleInstanceCodeunit: Codeunit "Single Instance Codeunit";
         DocumentNo: Code[20];
+        ItemJnlPostBatch: Codeunit "Item Jnl.-Post Batch";
+        ItemJnlLine: Record "Item Journal Line";
 }
